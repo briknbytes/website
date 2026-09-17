@@ -29,3 +29,13 @@ DISCORD_CLIENT_ID = "1550089943471358054"
 DISCORD_GUILD_ID = "1536005397561745409"
 DISCORD_REDIRECT_URI = "https://briknbytes.io/api/auth/callback"
 SITE_URL = "https://briknbytes.io"
+
+# Holds the actual recording/slides URLs, keyed by event slug — deliberately
+# NOT in git (this repo is public). Set values via `wrangler kv key put` or
+# the Cloudflare dashboard; see README's "Adding a recording" section.
+# The namespace id itself isn't a secret (it doesn't grant access on its
+# own), just replace the placeholder after creating the namespace:
+#   wrangler kv namespace create EVENTS_KV
+[[kv_namespaces]]
+binding = "EVENTS_KV"
+id = "9943b62ed34e44958628f81c9c36628a"

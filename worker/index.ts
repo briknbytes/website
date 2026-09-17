@@ -12,18 +12,21 @@ import {
   getSession,
   readOAuthStateCookie,
 } from "./lib/session";
-import events from "./data/events.json";
 
 export interface Env extends DiscordEnv {
   SESSION_SECRET: string;
   SITE_URL: string;
   ASSETS: Fetcher;
+  // Holds the actual recording/slides URLs, keyed by event slug, as JSON
+  // { recordingUrl?: string; slidesUrl?: string }. Deliberately NOT part of
+  // the git repo (which is public) — set via `wrangler kv key put` or the
+  // Cloudflare dashboard. See README's "Adding a recording" section.
+  EVENTS_KV: KVNamespace;
 }
 
-interface GatedEvent {
-  slug: string;
-  recordingUrl: string | null;
-  slidesUrl: string | null;
+interface GatedLinks {
+  recordingUrl?: string;
+  slidesUrl?: string;
 }
 
 export default {
@@ -117,10 +120,10 @@ async function handleLinks(request: Request, env: Env, slug: string): Promise<Re
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const event = (events as GatedEvent[]).find((e) => e.slug === slug);
-  if (!event) {
-    return Response.json({ error: "not_found" }, { status: 404 });
-  }
+  const links = await env.EVENTS_KV.get<GatedLinks>(slug, "json");
 
-  return Response.json({ recordingUrl: event.recordingUrl, slidesUrl: event.slidesUrl });
+  return Response.json({
+    recordingUrl: links?.recordingUrl ?? null,
+    slidesUrl: links?.slidesUrl ?? null,
+  });
 }

@@ -1,17 +1,13 @@
-// Reads events/*.yaml (single source of truth per event) and produces two
-// derived, generated artifacts — never edit these by hand:
+// Reads events/*.yaml (one file per event, safe to be public — this repo is
+// open source) and produces src/data/events-public.json for the Astro build.
 //
-//   src/data/events-public.json   -> consumed by the Astro build. Contains
-//                                     only public fields, plus booleans that
-//                                     say whether a recording/slides link
-//                                     exists (so the UI can render a gated
-//                                     placeholder without leaking the URL).
-//
-//   worker/data/events.json       -> bundled into the Worker script
-//                                     (worker/index.ts). Contains the full
-//                                     record, including recording_url/
-//                                     slides_url, and is only ever read
-//                                     server-side after a session check.
+// Recording/slides URLs are NOT stored here. events/*.yaml only records
+// whether a recording/slides link exists (has_recording/has_slides — safe to
+// be public), so the UI knows to render the gated section. The actual URLs
+// live in Cloudflare KV (EVENTS_KV), set via `wrangler kv key put` or the
+// dashboard — see README's "Adding a recording" section — and are read
+// directly by the Worker (worker/index.ts) at request time, never bundled
+// into a build artifact.
 //
 // Run automatically via `predev`/`prebuild` npm scripts.
 import { readdirSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
@@ -22,12 +18,10 @@ import yaml from "js-yaml";
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const eventsDir = path.join(root, "events");
 const publicOutPath = path.join(root, "src", "data", "events-public.json");
-const gatedOutPath = path.join(root, "worker", "data", "events.json");
 
 const files = readdirSync(eventsDir).filter((f) => f.endsWith(".yaml") || f.endsWith(".yml"));
 
 const publicEvents = [];
-const gatedEvents = [];
 const seenSlugs = new Set();
 
 for (const file of files) {
@@ -44,9 +38,6 @@ for (const file of files) {
   }
   seenSlugs.add(data.slug);
 
-  const recordingUrl = (data.recording_url || "").trim();
-  const slidesUrl = (data.slides_url || "").trim();
-
   publicEvents.push({
     slug: data.slug,
     title: data.title,
@@ -54,22 +45,14 @@ for (const file of files) {
     speaker: data.speaker || null,
     tags: data.tags || [],
     summary: data.summary.trim(),
-    hasRecording: recordingUrl.length > 0,
-    hasSlides: slidesUrl.length > 0,
-  });
-
-  gatedEvents.push({
-    slug: data.slug,
-    recordingUrl: recordingUrl || null,
-    slidesUrl: slidesUrl || null,
+    hasRecording: Boolean(data.has_recording),
+    hasSlides: Boolean(data.has_slides),
   });
 }
 
 publicEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
 
 mkdirSync(path.dirname(publicOutPath), { recursive: true });
-mkdirSync(path.dirname(gatedOutPath), { recursive: true });
 writeFileSync(publicOutPath, JSON.stringify(publicEvents, null, 2) + "\n");
-writeFileSync(gatedOutPath, JSON.stringify(gatedEvents, null, 2) + "\n");
 
-console.log(`Generated ${publicEvents.length} event(s) -> ${path.relative(root, publicOutPath)} and ${path.relative(root, gatedOutPath)}`);
+console.log(`Generated ${publicEvents.length} event(s) -> ${path.relative(root, publicOutPath)}`);

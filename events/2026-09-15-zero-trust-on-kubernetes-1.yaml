@@ -9,5 +9,5 @@ summary: >
   Kicking off a Zero Trust series — access and identity management on
   Kubernetes, using Paralus as a practical example. More sessions in the
   series to follow.
-recording_url: ""
-slides_url: ""
+has_recording: false
+has_slides: false

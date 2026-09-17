@@ -8,14 +8,15 @@ passwords, no stored email.
 
 ## How it's put together
 
-- `events/*.yaml` — one file per event, the **only** source of event data (public
-  fields + gated `recording_url`/`slides_url`).
-- `scripts/generate-events.mjs` — splits that into:
-  - `src/data/events-public.json` (generated, gitignored) — public fields only,
-    consumed by the Astro build. Recording/slides URLs never enter this file or
-    the static HTML — only booleans (`hasRecording`/`hasSlides`).
-  - `worker/data/events.json` (generated, gitignored) — full records,
-    bundled into the Worker only.
+- `events/*.yaml` — one file per event, the source of **public** event data.
+  This repo is open source, so these files are safe to be public: title,
+  date, speaker, tags, summary, and `has_recording`/`has_slides` booleans
+  (just "a recording exists", not the URL).
+- `scripts/generate-events.mjs` — reads those into `src/data/events-public.json`
+  (generated, gitignored) for the Astro build.
+- The **actual** recording/slides URLs are never in git at all — they live in
+  Cloudflare KV (`EVENTS_KV`), keyed by event slug, read directly by the
+  Worker at request time. See "Adding a recording" below.
 - `src/pages/`, `src/components/` — the static site (homepage, events list,
   event detail pages), built by Astro into `dist/`.
 - `worker/index.ts` — the one Worker script. Cloudflare serves any request
@@ -100,6 +101,14 @@ project via Git connect and it should land as a Worker as described here.
 4. In your Discord app's OAuth2 settings, add
    `https://briknbytes.io/api/auth/callback` as a redirect URL.
 5. Add the custom domain `briknbytes.io` under the project's **Domains** tab.
+6. Create the KV namespace that holds recording/slides URLs, and put its id
+   in `wrangler.toml`:
+   ```sh
+   npx wrangler kv namespace create EVENTS_KV
+   ```
+   Copy the `id` it prints into `wrangler.toml`'s `[[kv_namespaces]]` block
+   (replacing the `REPLACE_WITH_YOUR_KV_NAMESPACE_ID` placeholder) — this id
+   isn't a secret, it's safe to commit.
 
 ## Adding an event
 
@@ -113,13 +122,29 @@ speaker: "Speaker Name"   # optional — omit or leave blank to hide it
 tags: [kubernetes, security]
 summary: >
   One or two sentences describing the talk.
-recording_url: ""   # fill in after the event; leave blank until then
-slides_url: ""
+has_recording: false   # flip to true once you've added the link to KV (below)
+has_slides: false
 ```
 
-Commit and push to `main` — the site rebuilds automatically. Leave
-`recording_url`/`slides_url` blank until you have them; the event will show
-with no gated section until then.
+Commit and push to `main` — the site rebuilds automatically.
+
+## Adding a recording
+
+Once you have a real recording/slides link for a past event, it does **not**
+go in the YAML file (this repo is public — anyone could read it there). Instead:
+
+1. Set the URL in KV, keyed by the event's `slug`:
+   ```sh
+   npx wrangler kv key put --binding=EVENTS_KV "my-talk" \
+     '{"recordingUrl":"https://youtube.com/watch?v=...","slidesUrl":"https://slides.example.com/..."}'
+   ```
+   (Omit whichever of `recordingUrl`/`slidesUrl` you don't have yet — the
+   site only shows a button for the ones present.) You can also do this from
+   the Cloudflare dashboard: **Storage & Databases → KV → EVENTS_KV**.
+2. Flip `has_recording: true` (and/or `has_slides: true`) in that event's
+   YAML file, commit, and push — this tells the site to show the gated
+   section at all. Logged-out visitors still just see "members only"; the
+   real link only appears after a member logs in with Discord.
 
 ## Placeholder content to replace
 

@@ -8,5 +8,5 @@ tags:
 summary: >
   Scheduling GPUs on Kubernetes, optimizing for inference workloads, and
   running GPU operators in production.
-recording_url: ""
-slides_url: ""
+has_recording: false
+has_slides: false

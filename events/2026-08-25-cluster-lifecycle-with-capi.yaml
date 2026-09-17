@@ -8,5 +8,5 @@ tags:
 summary: >
   Managing the full Kubernetes cluster lifecycle with Cluster API and its
   infrastructure providers — CAPA, CAPG, and others.
-recording_url: ""
-slides_url: ""
+has_recording: false
+has_slides: false

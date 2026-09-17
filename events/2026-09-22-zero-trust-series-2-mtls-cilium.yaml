@@ -9,5 +9,5 @@ tags:
 summary: >
   Second installment of the Zero Trust series — enforcing mutual TLS between
   workloads in Kubernetes using Cilium.
-recording_url: ""
-slides_url: ""
+has_recording: false
+has_slides: false
