@@ -12,3 +12,20 @@ compatibility_date = "2024-09-25"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+
+# Non-secret config. `wrangler deploy` treats [vars] as the source of truth
+# for plain (non-secret) variables and OVERWRITES anything set only via the
+# dashboard with whatever is (or isn't) declared here — so these must live
+# here, not just in the dashboard, or every CI deploy wipes them back to
+# undefined. Safe to commit: a Discord OAuth client ID and a guild/server ID
+# are public identifiers (same as any OAuth app's client ID), and the other
+# two are just this site's own public URL.
+#
+# DISCORD_CLIENT_SECRET and SESSION_SECRET are NOT here — they stay as
+# "Secret" runtime variables in the Cloudflare dashboard, which `wrangler
+# deploy` does not touch (only plain `[vars]` get synced/overwritten).
+[vars]
+DISCORD_CLIENT_ID = "1550089943471358054"
+DISCORD_GUILD_ID = "1536005397561745409"
+DISCORD_REDIRECT_URI = "https://briknbytes.io/api/auth/callback"
+SITE_URL = "https://briknbytes.io"
