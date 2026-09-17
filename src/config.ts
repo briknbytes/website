@@ -4,7 +4,7 @@
 export const SITE = {
   name: "Brik & Bytes",
   description: "A Tunisian community for infrastructure, DevOps, and Kubernetes practitioners.",
-  discordInviteUrl: "https://discord.gg/REPLACE_ME",
+  discordInviteUrl: "https://discord.gg/nThBHyWfCu",
   githubUrl: "https://github.com/briknbytes",
   about:
     "Brik & Bytes brings together the people who build and run infrastructure in Tunisia — DevOps engineers, SREs, platform engineers, and anyone curious about Kubernetes and cloud native systems. We swap notes on Discord, and host talks and hands-on sessions from the community, for the community.",
