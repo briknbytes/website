@@ -65,9 +65,6 @@ cp .dev.vars.example .dev.vars   # fill in your Discord app's client id/secret +
 npm run worker:dev               # builds the site, then runs it under wrangler dev
 ```
 
-In your [Discord Developer Portal](https://discord.com/developers/applications)
-app, add `http://localhost:8787/api/auth/callback` as an OAuth2 redirect URL
-while testing locally.
 
 ## Deploying to Cloudflare
 
@@ -146,7 +143,3 @@ go in the YAML file (this repo is public — anyone could read it there). Instea
    section at all. Logged-out visitors still just see "members only"; the
    real link only appears after a member logs in with Discord.
 
-## Placeholder content to replace
-
-- `src/config.ts` — `discordInviteUrl` (currently a placeholder invite) and
-  `githubUrl`.
