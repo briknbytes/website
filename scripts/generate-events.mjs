@@ -7,11 +7,11 @@
 //                                     exists (so the UI can render a gated
 //                                     placeholder without leaking the URL).
 //
-//   functions/_data/events.json   -> bundled with the Pages Functions.
-//                                     Contains the full record, including
-//                                     recording_url/slides_url, and is only
-//                                     ever read server-side after a session
-//                                     check.
+//   worker/data/events.json       -> bundled into the Worker script
+//                                     (worker/index.ts). Contains the full
+//                                     record, including recording_url/
+//                                     slides_url, and is only ever read
+//                                     server-side after a session check.
 //
 // Run automatically via `predev`/`prebuild` npm scripts.
 import { readdirSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
@@ -22,7 +22,7 @@ import yaml from "js-yaml";
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const eventsDir = path.join(root, "events");
 const publicOutPath = path.join(root, "src", "data", "events-public.json");
-const gatedOutPath = path.join(root, "functions", "_data", "events.json");
+const gatedOutPath = path.join(root, "worker", "data", "events.json");
 
 const files = readdirSync(eventsDir).filter((f) => f.endsWith(".yaml") || f.endsWith(".yml"));
 

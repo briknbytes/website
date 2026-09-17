@@ -10,7 +10,8 @@
     "prebuild": "npm run generate:events",
     "build": "astro build",
     "preview": "astro preview",
-    "pages:dev": "npm run build && wrangler pages dev ./dist"
+    "worker:dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "astro": "^4.16.0"

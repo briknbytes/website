@@ -6,4 +6,4 @@ dist/
 
 # Generated from events/*.yaml by scripts/generate-events.mjs — never edit by hand.
 src/data/events-public.json
-functions/_data/events.json
+worker/data/events.json

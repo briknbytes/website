@@ -1,10 +1,14 @@
-name = "briknbytes-website"
+# "website" matches the project name already created in the Cloudflare
+# dashboard (Workers & Pages -> website) — Cloudflare's Git-connected build
+# checks this against the dashboard project and offers to auto-PR a fix if
+# they drift apart.
+name = "website"
+main = "worker/index.ts"
 compatibility_date = "2024-09-25"
 
-# NOTE: `pages_build_output_dir` does NOT make plain `npx wrangler deploy`
-# deploy this as a Pages project — tested against wrangler 3.114 and 4.133,
-# both explicitly refuse and tell you to run `wrangler pages deploy` instead.
-# This file only exists so `wrangler pages deploy` can infer the project
-# name; the Cloudflare dashboard's "Deploy command" build setting must be
-# set to `npx wrangler pages deploy dist` (see README's Deploying section).
-pages_build_output_dir = "dist"
+# Static Astro build. Any request matching a file here is served directly
+# without invoking the Worker (default run_worker_first = false); anything
+# else (in practice, only /api/*) falls through to worker/index.ts.
+[assets]
+directory = "./dist"
+binding = "ASSETS"

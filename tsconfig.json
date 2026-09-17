@@ -4,6 +4,6 @@
     "types": ["@cloudflare/workers-types"],
     "resolveJsonModule": true
   },
-  "include": [".astro/types.d.ts", "src/**/*", "functions/**/*"],
+  "include": [".astro/types.d.ts", "src/**/*", "worker/**/*"],
   "exclude": ["dist"]
 }

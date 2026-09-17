@@ -1,9 +1,10 @@
 # Brik & Bytes — website
 
 Static site for the Brik & Bytes community (Tunisian infrastructure/DevOps/Kubernetes),
-built with [Astro](https://astro.build) and deployed to Cloudflare Pages. Gated content
-(event recordings/slides) is protected by a Discord-membership check running in
-Cloudflare Pages Functions — no separate accounts, no passwords, no stored email.
+built with [Astro](https://astro.build) and deployed to Cloudflare as a Worker with
+static assets. Gated content (event recordings/slides) is protected by a
+Discord-membership check running in the Worker — no separate accounts, no
+passwords, no stored email.
 
 ## How it's put together
 
@@ -13,16 +14,23 @@ Cloudflare Pages Functions — no separate accounts, no passwords, no stored ema
   - `src/data/events-public.json` (generated, gitignored) — public fields only,
     consumed by the Astro build. Recording/slides URLs never enter this file or
     the static HTML — only booleans (`hasRecording`/`hasSlides`).
-  - `functions/_data/events.json` (generated, gitignored) — full records,
-    bundled into the Pages Functions only.
+  - `worker/data/events.json` (generated, gitignored) — full records,
+    bundled into the Worker only.
 - `src/pages/`, `src/components/` — the static site (homepage, events list,
-  event detail pages).
-- `functions/api/auth/*` — Discord OAuth login/callback/logout/me endpoints.
-- `functions/api/events/[slug]/links.ts` — the only endpoint that ever returns
-  a recording/slides URL, and only with a valid session cookie.
+  event detail pages), built by Astro into `dist/`.
+- `worker/index.ts` — the one Worker script. Cloudflare serves any request
+  matching a file in `dist/` directly (see `[assets]` in `wrangler.toml`);
+  everything else — in practice, only `/api/*` — reaches this script, which
+  handles Discord OAuth login/callback/logout/me and the gated links endpoint.
+- `worker/index.ts`'s `/api/events/:slug/links` route is the only place that
+  ever returns a recording/slides URL, and only with a valid session cookie.
 
 Run `npm run generate:events` (or `npm run dev` / `npm run build`, which do it
 for you via `predev`/`prebuild`) whenever you add or edit an event file.
+
+Note: this deploys as a **Worker with static assets**, not Cloudflare's
+older "Pages" product — see "Deploying" below for why that distinction
+matters and what it changes in the dashboard.
 
 ## Auth flow
 
@@ -39,49 +47,50 @@ for you via `predev`/`prebuild`) whenever you add or edit an event file.
 5. `GET /api/events/:slug/links` returns the real recording/slides URLs only
    if the session cookie is present and valid; otherwise `401`.
 
-Session cookies last 30 days (`SESSION_TTL_SECONDS` in `functions/_lib/session.ts`).
+Session cookies last 30 days (`SESSION_TTL_SECONDS` in `worker/lib/session.ts`).
 
 ## Local development
 
 ```sh
 npm install
-npm run dev              # Astro dev server (site only, no Functions/auth)
+npm run dev              # Astro dev server (site only, no Worker/auth)
 ```
 
-To test the full auth flow locally (Functions + auth), you need a Discord
+To test the full auth flow locally (Worker + auth), you need a Discord
 application redirecting to a local URL:
 
 ```sh
 cp .dev.vars.example .dev.vars   # fill in your Discord app's client id/secret + your guild id
-npm run pages:dev                # builds the site, then runs it under wrangler with Functions
+npm run worker:dev               # builds the site, then runs it under wrangler dev
 ```
 
 In your [Discord Developer Portal](https://discord.com/developers/applications)
-app, add `http://localhost:8788/api/auth/callback` as an OAuth2 redirect URL
+app, add `http://localhost:8787/api/auth/callback` as an OAuth2 redirect URL
 while testing locally.
 
-## Deploying to Cloudflare Pages
+## Deploying to Cloudflare
 
-1. Connect this GitHub repo in the Cloudflare dashboard (Workers & Pages →
-   Create → Pages → Connect to Git). Every merge to `main` auto-builds and
-   deploys; PRs get preview deployments.
-2. Build settings:
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-   - **Deploy command**: `npx wrangler pages deploy dist`. Cloudflare's
-     Git-connected builds now default this to plain `npx wrangler deploy`,
-     which fails with "It looks like you've run a Workers-specific command
-     in a Pages project" — `wrangler deploy` does not know how to publish a
-     Pages project even with `pages_build_output_dir` set in
-     `wrangler.toml` (tested against wrangler 3.114 and 4.133, both refuse).
-     If the dashboard doesn't expose a separate "Deploy command" field for
-     your project, it was likely created as a Workers project instead of a
-     Pages project — recreate it via Workers & Pages → **Pages** tab
-     specifically → Connect to Git.
-   - Functions are picked up automatically from `functions/` at the repo root.
-3. Set these as Pages environment variables (Settings → Environment variables
-   — put secrets in "Encrypt" mode for `DISCORD_CLIENT_SECRET` and
-   `SESSION_SECRET`):
+This is set up as a **Worker with static assets** (`wrangler.toml`'s `main` +
+`[assets]`), which is what Cloudflare's dashboard creates today when you
+connect a Git repo under Workers & Pages — the classic "Pages" product with
+file-based `functions/` routing and its own build pipeline isn't what you get
+from a plain "Connect to Git" anymore. If you instead see a project with a
+distinct "Build output directory" setting and no "Deploy command" field, it's
+a classic Pages project and this repo's layout (one `worker/index.ts` entry
+point rather than a `functions/` directory) won't match it — recreate the
+project via Git connect and it should land as a Worker as described here.
+
+1. Connect this GitHub repo (Workers & Pages → Connect to Git). Every merge
+   to `main` auto-builds and deploys; PRs get preview deployments.
+2. In the project's **Settings → Build**, set:
+   - **Build command**: `npm run build` (runs `generate-events` then
+     `astro build`, producing `dist/`)
+   - **Deploy command**: `npx wrangler deploy` (this is Cloudflare's default
+     for a Worker project — leave it as-is)
+   - Root directory: `/`
+3. Set these as **Runtime variables and secrets** (not "Build variables and
+   secrets" — the Worker reads these at request time, not during the Astro
+   build). Mark `DISCORD_CLIENT_SECRET` and `SESSION_SECRET` as **Secret**:
    - `DISCORD_CLIENT_ID`
    - `DISCORD_CLIENT_SECRET`
    - `DISCORD_GUILD_ID` — your Discord server's ID
@@ -90,8 +99,7 @@ while testing locally.
    - `SITE_URL` — `https://briknbytes.io`
 4. In your Discord app's OAuth2 settings, add
    `https://briknbytes.io/api/auth/callback` as a redirect URL.
-5. Add the custom domain `briknbytes.io` under the Pages project's Custom
-   domains tab.
+5. Add the custom domain `briknbytes.io` under the project's **Domains** tab.
 
 ## Adding an event
 
