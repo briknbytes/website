@@ -1,0 +1,25 @@
+{
+  "name": "briknbytes-website",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "generate:events": "node scripts/generate-events.mjs",
+    "predev": "npm run generate:events",
+    "dev": "astro dev",
+    "prebuild": "npm run generate:events",
+    "build": "astro build",
+    "preview": "astro preview",
+    "pages:dev": "npm run build && wrangler pages dev ./dist"
+  },
+  "dependencies": {
+    "astro": "^4.16.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "js-yaml": "^4.1.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^3.90.0"
+  }
+}

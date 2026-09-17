@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import EventBanner from "../components/EventBanner.astro";
+import EventCard from "../components/EventCard.astro";
+import { SITE } from "../config";
+import logo from "../assets/logo.svg";
+import events from "../data/events-public.json";
+
+const now = Date.now();
+const upcoming = events
+  .filter((e) => new Date(e.date).getTime() > now)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+
+const latest = [...events].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+---
+
+<BaseLayout title="Home">
+  <div class="auth-banner error" data-auth-error hidden>
+    Login failed — please try again, or make sure you're a member of our Discord server.
+  </div>
+
+  <section class="hero">
+    <img src={logo.src} width="64" height="64" alt="" />
+    <h1>{SITE.name}</h1>
+    <p class="tagline">{SITE.description}</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href={SITE.discordInviteUrl}>Join our Discord</a>
+      <a class="btn btn-outline" href="/events/">Browse events</a>
+    </div>
+  </section>
+
+  {upcoming && (
+    <EventBanner slug={upcoming.slug} title={upcoming.title} date={upcoming.date} speaker={upcoming.speaker} />
+  )}
+
+  {latest && (
+    <section>
+      <div class="section-title">
+        <h2>Latest event</h2>
+        <a href="/events/">All events →</a>
+      </div>
+      <EventCard {...latest} headingLevel="h3" />
+    </section>
+  )}
+</BaseLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const authError = params.get("auth_error");
+  if (authError) {
+    const banner = document.querySelector<HTMLElement>("[data-auth-error]");
+    if (banner) banner.hidden = false;
+  }
+</script>

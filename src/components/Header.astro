@@ -1,0 +1,19 @@
+---
+import { SITE } from "../config";
+import logo from "../assets/logo.svg";
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <img src={logo.src} width="28" height="28" alt="" />
+      {SITE.name}
+    </a>
+    <nav class="site-nav">
+      <a href="/">Home</a>
+      <a href="/events/">Events</a>
+      <a href="/api/auth/login" class="btn btn-outline" data-auth="out" hidden>Login with Discord</a>
+      <a href="/api/auth/logout" class="btn btn-outline" data-auth="in" hidden>Log out</a>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,15 @@
+slug: example-past-event
+title: "Placeholder Talk: Zero to GitOps with Argo CD"
+date: "2026-06-04T18:00:00+01:00"
+speaker: "Jane Doe"
+tags:
+  - gitops
+  - argo-cd
+  - ci-cd
+summary: >
+  A placeholder past event so you can see the public summary plus the
+  logged-out vs. logged-in states for the recording link. Logged-out
+  visitors see a "members only" prompt; logged-in Discord members see the
+  real link below.
+recording_url: "https://example.com/recordings/example-past-event"
+slides_url: "https://example.com/slides/example-past-event.pdf"

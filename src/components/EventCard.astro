@@ -1,0 +1,54 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  date: string;
+  speaker: string;
+  tags: string[];
+  summary: string;
+  hasRecording: boolean;
+  hasSlides: boolean;
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  slug,
+  title,
+  date,
+  speaker,
+  tags,
+  summary,
+  hasRecording,
+  hasSlides,
+  headingLevel = "h3",
+} = Astro.props;
+
+const Heading = headingLevel;
+const formatted = new Date(date).toLocaleDateString("en-GB", { dateStyle: "long" });
+const isGated = hasRecording || hasSlides;
+---
+
+<article class="card">
+  <Heading><a href={`/events/${slug}/`}>{title}</a></Heading>
+  <div class="meta">{formatted} · {speaker}</div>
+  {tags.length > 0 && (
+    <div class="tags">
+      {tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+  )}
+  <p>{summary}</p>
+
+  {isGated && (
+    <>
+      <div class="gated-links" data-gated-links={slug} data-auth="in" hidden>
+        Loading links…
+      </div>
+      <p class="gated-note" data-auth="out" hidden>
+        Recording/slides are for logged-in Discord members —
+        <a href="/api/auth/login">log in with Discord</a> to view.
+      </p>
+    </>
+  )}
+</article>
+
+<script src="../scripts/gated-links.ts"></script>

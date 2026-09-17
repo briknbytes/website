@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.dev.vars
+
+# Generated from events/*.yaml by scripts/generate-events.mjs — never edit by hand.
+src/data/events-public.json
+functions/_data/events.json

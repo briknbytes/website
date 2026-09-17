@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EventCard from "../../components/EventCard.astro";
+import events from "../../data/events-public.json";
+
+const now = Date.now();
+const upcoming = events.filter((e) => new Date(e.date).getTime() > now);
+const past = events.filter((e) => new Date(e.date).getTime() <= now);
+---
+
+<BaseLayout title="Events" description="Upcoming and past Brik & Bytes events.">
+  <h1>Events</h1>
+
+  {upcoming.length > 0 && (
+    <section>
+      <h2>Upcoming</h2>
+      {upcoming.map((event) => <EventCard {...event} />)}
+    </section>
+  )}
+
+  <section>
+    <h2>Past</h2>
+    {past.length > 0 ? (
+      past.map((event) => <EventCard {...event} />)
+    ) : (
+      <p>No past events yet.</p>
+    )}
+  </section>
+</BaseLayout>

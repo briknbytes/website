@@ -1,0 +1,25 @@
+---
+interface Props {
+  slug: string;
+  title: string;
+  date: string;
+  speaker: string;
+}
+
+const { slug, title, date, speaker } = Astro.props;
+
+const formatted = new Date(date).toLocaleString("en-GB", {
+  dateStyle: "full",
+  timeStyle: "short",
+});
+---
+
+<div class="banner" data-upcoming-banner data-event-date={date}>
+  <div>
+    <strong>Next event</strong>
+    <div><a href={`/events/${slug}/`}>{title}</a> — {formatted} with {speaker}</div>
+  </div>
+  <a class="btn btn-primary" href={`/events/${slug}/`}>Details</a>
+</div>
+
+<script src="../scripts/event-banner.ts"></script>

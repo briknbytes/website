@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import events from "../../data/events-public.json";
+
+export function getStaticPaths() {
+  return events.map((event) => ({
+    params: { slug: event.slug },
+    props: { event },
+  }));
+}
+
+const { event } = Astro.props;
+const formatted = new Date(event.date).toLocaleString("en-GB", {
+  dateStyle: "full",
+  timeStyle: "short",
+});
+const isGated = event.hasRecording || event.hasSlides;
+---
+
+<BaseLayout title={event.title} description={event.summary}>
+  <p><a href="/events/">← All events</a></p>
+  <h1>{event.title}</h1>
+  <p class="meta">{formatted} · {event.speaker}</p>
+
+  {event.tags.length > 0 && (
+    <div class="tags">
+      {event.tags.map((tag: string) => <span class="tag">{tag}</span>)}
+    </div>
+  )}
+
+  <p>{event.summary}</p>
+
+  {isGated && (
+    <div class="card">
+      <h3>Recording &amp; slides</h3>
+      <div class="gated-links" data-gated-links={event.slug} data-auth="in" hidden>
+        Loading links…
+      </div>
+      <p class="gated-note" data-auth="out" hidden>
+        These are for logged-in Discord members —
+        <a href="/api/auth/login">log in with Discord</a> to view.
+      </p>
+    </div>
+  )}
+</BaseLayout>
+
+<script src="../../scripts/gated-links.ts"></script>
