@@ -2,7 +2,9 @@
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import AnnounceBar from "../components/AnnounceBar.astro";
 import { SITE } from "../config";
+import { getUpcomingEvent } from "../lib/events";
 
 interface Props {
   title: string;
@@ -10,6 +12,7 @@ interface Props {
 }
 
 const { title, description = SITE.description } = Astro.props;
+const upcoming = getUpcomingEvent();
 ---
 
 <!doctype html>
@@ -20,8 +23,15 @@ const { title, description = SITE.description } = Astro.props;
     <title>{title} · {SITE.name}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"
+    />
   </head>
   <body>
+    {upcoming && <AnnounceBar slug={upcoming.slug} title={upcoming.title} date={upcoming.date} />}
     <Header />
     <main>
       <div class="wrap">

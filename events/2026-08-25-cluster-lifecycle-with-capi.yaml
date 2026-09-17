@@ -1,0 +1,12 @@
+slug: cluster-lifecycle-with-capi
+title: "Cluster Lifecycle Management with Cluster API (CAPI)"
+date: "2026-08-25T20:00:00+01:00"
+tags:
+  - kubernetes
+  - cluster-api
+  - infrastructure
+summary: >
+  Managing the full Kubernetes cluster lifecycle with Cluster API and its
+  infrastructure providers — CAPA, CAPG, and others.
+recording_url: ""
+slides_url: ""

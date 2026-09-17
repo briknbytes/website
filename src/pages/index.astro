@@ -1,17 +1,80 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import EventBanner from "../components/EventBanner.astro";
 import EventCard from "../components/EventCard.astro";
-import { SITE } from "../config";
+import { SITE, TOPICS } from "../config";
 import logo from "../assets/logo.svg";
-import events from "../data/events-public.json";
+import { getLatestEvent } from "../lib/events";
 
-const now = Date.now();
-const upcoming = events
-  .filter((e) => new Date(e.date).getTime() > now)
-  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+const latest = getLatestEvent();
 
-const latest = [...events].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+const howItWorks = [
+  {
+    title: "Talks & workshops",
+    description: "Hands-on sessions on Kubernetes, cloud infra, and platform engineering from practitioners in the community.",
+    icon: "M4 6h16M4 12h10M4 18h7",
+  },
+  {
+    title: "Open, in public",
+    description: "Recordings, slides, and event history stay archived here — searchable, credited, and free to revisit.",
+    icon: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+  },
+  {
+    title: "A real community",
+    description: "Discord is where the day-to-day happens — questions, job posts, and people shipping things together.",
+    icon: "M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  },
+];
+
+const getInvolved = [
+  {
+    title: "Attend",
+    description: "Join events live on Discord voice/stage — no experience level required, just curiosity.",
+    icon: "M12 2 2 7l10 5 10-5-10-5ZM2 17l10 5 10-5M2 12l10 5 10-5",
+  },
+  {
+    title: "Speak",
+    description: "Done something interesting with Kubernetes, infra, or DevOps? Pitch a talk in Discord — no polish required.",
+    icon: "M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3ZM19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8",
+  },
+  {
+    title: "Contribute",
+    description: "The site and tooling are open source — issues and PRs welcome.",
+    icon: "M9 18c-4 1.5-4-2.5-6-3m12 9v-3.9c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 5.6 5.4 5.9 5.4 5.9a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 12.3c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V24",
+  },
+];
+
+const steps = [
+  { title: "Join the Discord", description: "That's the only sign-up — no separate account, no email list." },
+  { title: "Say hi", description: "Introduce yourself — what you work on, what you're into." },
+  { title: "Follow along", description: "Watch this page (or the announcement bar) for what's coming up next." },
+];
+
+const faqs = [
+  {
+    q: "Is Brik & Bytes free to join?",
+    a: "Yes — joining the Discord server is free and open to anyone interested in infrastructure, DevOps, or Kubernetes.",
+  },
+  {
+    q: "Do I need to be an expert to join?",
+    a: "No. Members range from students to senior engineers — the only requirement is curiosity.",
+  },
+  {
+    q: "Is this only for people in Tunisia?",
+    a: "The community is rooted in Tunisia, but anyone is welcome regardless of location.",
+  },
+  {
+    q: "What language are events held in?",
+    a: "Tunisian dialect (Derja), unless a specific event's page says otherwise.",
+  },
+  {
+    q: "Can I propose a talk?",
+    a: "Yes — reach out on Discord with what you'd like to present, at any level of polish.",
+  },
+  {
+    q: "How do I find out about new events?",
+    a: "The banner at the top of this site shows the next event, and it's also announced on Discord.",
+  },
+];
 ---
 
 <BaseLayout title="Home">
@@ -20,18 +83,90 @@ const latest = [...events].sort((a, b) => new Date(b.date).getTime() - new Date(
   </div>
 
   <section class="hero">
-    <img src={logo.src} width="64" height="64" alt="" />
-    <h1>{SITE.name}</h1>
+    <span class="eyebrow"><span class="dot"></span> Tunisia · Infra & DevOps</span>
+    <div class="hero-lockup">
+      <img src={logo.src} width="56" height="56" alt="" />
+      <h1 class="wordmark"><span class="w-brick">Brik</span> <span class="w-amp">&amp;</span> <span class="w-byte">Bytes</span></h1>
+    </div>
     <p class="tagline">{SITE.description}</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href={SITE.discordInviteUrl}>Join our Discord</a>
       <a class="btn btn-outline" href="/events/">Browse events</a>
     </div>
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-value">{SITE.stats.members}</span>
+        <span class="stat-label">Discord members</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">{SITE.stats.eventsHosted}</span>
+        <span class="stat-label">Events hosted</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">🇹🇳</span>
+        <span class="stat-label">Made in Tunisia</span>
+      </div>
+    </div>
   </section>
 
-  {upcoming && (
-    <EventBanner slug={upcoming.slug} title={upcoming.title} date={upcoming.date} speaker={upcoming.speaker} />
-  )}
+  <section class="about-section">
+    <h2>Who this is for</h2>
+    <p>{SITE.about}</p>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>What we talk about</h2></div>
+    <div class="topic-pills">
+      {TOPICS.map((topic, i) => (
+        <span class={`topic-pill ${i % 2 === 0 ? "topic-pill-brick" : "topic-pill-byte"}`}>{topic}</span>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>How it works</h2></div>
+    <div class="feature-grid">
+      {howItWorks.map((f) => (
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={`<path d="${f.icon}" />`} />
+          </div>
+          <h3>{f.title}</h3>
+          <p>{f.description}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>Get involved</h2></div>
+    <div class="feature-grid">
+      {getInvolved.map((f) => (
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-brick">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={`<path d="${f.icon}" />`} />
+          </div>
+          <h3>{f.title}</h3>
+          <p>{f.description}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title"><h2>New here? Start in 3 steps</h2></div>
+    <ol class="steps-list">
+      {steps.map((s, i) => (
+        <li class="step">
+          <span class="step-number">{i + 1}</span>
+          <div>
+            <h3>{s.title}</h3>
+            <p>{s.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
 
   {latest && (
     <section>
@@ -42,6 +177,24 @@ const latest = [...events].sort((a, b) => new Date(b.date).getTime() - new Date(
       <EventCard {...latest} headingLevel="h3" />
     </section>
   )}
+
+  <section>
+    <div class="section-title"><h2>Frequently asked</h2></div>
+    <div class="faq-list">
+      {faqs.map((f) => (
+        <details class="faq-item">
+          <summary>{f.q}</summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2>Come build with us</h2>
+    <p>Questions, job posts, and people shipping things together — join {SITE.stats.members} members already on Discord.</p>
+    <a class="btn btn-primary" href={SITE.discordInviteUrl}>Join the Discord</a>
+  </section>
 </BaseLayout>
 
 <script>

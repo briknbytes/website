@@ -18,15 +18,17 @@ const isGated = event.hasRecording || event.hasSlides;
 ---
 
 <BaseLayout title={event.title} description={event.summary}>
-  <p><a href="/events/">← All events</a></p>
-  <h1>{event.title}</h1>
-  <p class="meta">{formatted} · {event.speaker}</p>
+  <div class="page-header">
+    <p><a href="/events/">← All events</a></p>
+    <h1>{event.title}</h1>
+    <p class="meta">{formatted}{event.speaker && ` · ${event.speaker}`}</p>
 
-  {event.tags.length > 0 && (
-    <div class="tags">
-      {event.tags.map((tag: string) => <span class="tag">{tag}</span>)}
-    </div>
-  )}
+    {event.tags.length > 0 && (
+      <div class="tags">
+        {event.tags.map((tag: string) => <span class="tag">{tag}</span>)}
+      </div>
+    )}
+  </div>
 
   <p>{event.summary}</p>
 
@@ -37,8 +39,11 @@ const isGated = event.hasRecording || event.hasSlides;
         Loading links…
       </div>
       <p class="gated-note" data-auth="out" hidden>
-        These are for logged-in Discord members —
-        <a href="/api/auth/login">log in with Discord</a> to view.
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="10" width="16" height="10" rx="2" />
+          <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+        </svg>
+        Members only — <a href="/api/auth/login">log in with Discord</a> to view.
       </p>
     </div>
   )}

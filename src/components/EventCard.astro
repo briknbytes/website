@@ -3,7 +3,7 @@ interface Props {
   slug: string;
   title: string;
   date: string;
-  speaker: string;
+  speaker: string | null;
   tags: string[];
   summary: string;
   hasRecording: boolean;
@@ -24,31 +24,43 @@ const {
 } = Astro.props;
 
 const Heading = headingLevel;
-const formatted = new Date(date).toLocaleDateString("en-GB", { dateStyle: "long" });
+const d = new Date(date);
+const month = d.toLocaleDateString("en-GB", { month: "short" });
+const day = d.toLocaleDateString("en-GB", { day: "numeric" });
+const formatted = d.toLocaleDateString("en-GB", { dateStyle: "long" });
 const isGated = hasRecording || hasSlides;
 ---
 
-<article class="card">
-  <Heading><a href={`/events/${slug}/`}>{title}</a></Heading>
-  <div class="meta">{formatted} · {speaker}</div>
-  {tags.length > 0 && (
-    <div class="tags">
-      {tags.map((tag) => <span class="tag">{tag}</span>)}
-    </div>
-  )}
-  <p>{summary}</p>
-
-  {isGated && (
-    <>
-      <div class="gated-links" data-gated-links={slug} data-auth="in" hidden>
-        Loading links…
+<article class="card event-card">
+  <div class="event-date-badge">
+    <span class="month">{month}</span>
+    <span class="day">{day}</span>
+  </div>
+  <div class="event-card-body">
+    <Heading><a href={`/events/${slug}/`}>{title}</a></Heading>
+    <div class="meta">{formatted}{speaker && ` · ${speaker}`}</div>
+    {tags.length > 0 && (
+      <div class="tags">
+        {tags.map((tag) => <span class="tag">{tag}</span>)}
       </div>
-      <p class="gated-note" data-auth="out" hidden>
-        Recording/slides are for logged-in Discord members —
-        <a href="/api/auth/login">log in with Discord</a> to view.
-      </p>
-    </>
-  )}
+    )}
+    <p>{summary}</p>
+
+    {isGated && (
+      <>
+        <div class="gated-links" data-gated-links={slug} data-auth="in" hidden>
+          Loading links…
+        </div>
+        <p class="gated-note" data-auth="out" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="10" rx="2" />
+            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+          </svg>
+          Members only — <a href="/api/auth/login">log in with Discord</a> to view.
+        </p>
+      </>
+    )}
+  </div>
 </article>
 
 <script src="../scripts/gated-links.ts"></script>

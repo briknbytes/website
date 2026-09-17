@@ -1,0 +1,12 @@
+slug: gpu-scheduling-on-kubernetes
+title: "GPU Scheduling on Kubernetes: Inference Optimization & GPU Operators"
+date: "2026-09-06T21:00:00+01:00"
+tags:
+  - kubernetes
+  - gpu
+  - machine-learning
+summary: >
+  Scheduling GPUs on Kubernetes, optimizing for inference workloads, and
+  running GPU operators in production.
+recording_url: ""
+slides_url: ""

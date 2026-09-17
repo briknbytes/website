@@ -34,7 +34,7 @@ for (const file of files) {
   const raw = readFileSync(path.join(eventsDir, file), "utf8");
   const data = yaml.load(raw);
 
-  for (const field of ["slug", "title", "date", "speaker", "summary"]) {
+  for (const field of ["slug", "title", "date", "summary"]) {
     if (!data[field]) {
       throw new Error(`events/${file} is missing required field "${field}"`);
     }
@@ -51,7 +51,7 @@ for (const file of files) {
     slug: data.slug,
     title: data.title,
     date: data.date,
-    speaker: data.speaker,
+    speaker: data.speaker || null,
     tags: data.tags || [],
     summary: data.summary.trim(),
     hasRecording: recordingUrl.length > 0,

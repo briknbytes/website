@@ -1,0 +1,30 @@
+---
+// A slim, site-wide announcement strip above the header (rendered from
+// BaseLayout, not per-page) — the "new product" banner pattern, not an
+// in-content card. Defaults hidden in markup; the script decides whether
+// to reveal it (date not passed, and not dismissed for this event) to
+// avoid a flash of the bar right before it disappears.
+interface Props {
+  slug: string;
+  title: string;
+  date: string;
+}
+
+const { slug, title, date } = Astro.props;
+
+const formatted = new Date(date).toLocaleDateString("en-GB", {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+});
+---
+
+<div class="announce-bar" data-announce-bar data-event-date={date} data-event-slug={slug} hidden>
+  <div class="wrap announce-inner">
+    <span class="announce-text">🚀 <strong>Next event:</strong> {title} — {formatted}</span>
+    <a class="announce-link" href={`/events/${slug}/`}>Details →</a>
+    <button class="announce-close" data-announce-close aria-label="Dismiss">&times;</button>
+  </div>
+</div>
+
+<script src="../scripts/announce-bar.ts"></script>

@@ -109,7 +109,7 @@ Add a new file to `events/`, e.g. `events/2026-12-01-my-talk.yaml`:
 slug: my-talk
 title: "My Talk Title"
 date: "2026-12-01T18:00:00+01:00"
-speaker: "Speaker Name"
+speaker: "Speaker Name"   # optional — omit or leave blank to hide it
 tags: [kubernetes, security]
 summary: >
   One or two sentences describing the talk.
@@ -123,9 +123,5 @@ with no gated section until then.
 
 ## Placeholder content to replace
 
-- `src/config.ts` — `discordInviteUrl` (currently a placeholder invite).
-- `src/assets/logo.svg` / `public/favicon.svg` — placeholder "B&B" mark.
-- `events/2026-11-10-example-upcoming-event.yaml` and
-  `events/2026-06-04-example-past-event.yaml` — delete once you have real events;
-  they exist so you can see the upcoming-event banner, the public summary, and
-  the logged-out/logged-in states of a gated recording link.
+- `src/config.ts` — `discordInviteUrl` (currently a placeholder invite) and
+  `githubUrl`.

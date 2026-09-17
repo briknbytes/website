@@ -6,14 +6,34 @@ import logo from "../assets/logo.svg";
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="/">
-      <img src={logo.src} width="28" height="28" alt="" />
+      <img src={logo.src} width="30" height="30" alt="" />
       {SITE.name}
     </a>
-    <nav class="site-nav">
-      <a href="/">Home</a>
-      <a href="/events/">Events</a>
-      <a href="/api/auth/login" class="btn btn-outline" data-auth="out" hidden>Login with Discord</a>
-      <a href="/api/auth/logout" class="btn btn-outline" data-auth="in" hidden>Log out</a>
+    <nav class="site-nav" data-nav>
+      <div class="nav-links">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/events/">Events</a>
+        <a class="nav-link" href={SITE.discordInviteUrl}>Discord</a>
+        <a href="/api/auth/login" class="btn btn-outline btn-sm" data-auth="out" hidden>Login with Discord</a>
+        <a href="/api/auth/logout" class="btn btn-outline btn-sm" data-auth="in" hidden>Log out</a>
+      </div>
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     </nav>
   </div>
 </header>
+
+<script>
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const toggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+  if (nav && toggle) {
+    toggle.addEventListener("click", () => {
+      const open = nav.dataset.open === "true";
+      nav.dataset.open = open ? "false" : "true";
+      toggle.setAttribute("aria-expanded", String(!open));
+    });
+  }
+</script>

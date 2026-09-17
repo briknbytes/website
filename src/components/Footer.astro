@@ -1,11 +1,22 @@
 ---
 import { SITE } from "../config";
+import logo from "../assets/logo.svg";
 ---
 
 <footer class="site-footer">
   <div class="wrap">
-    <p>
-      &copy; {new Date().getFullYear()} {SITE.name} · <a href={SITE.discordInviteUrl}>Join us on Discord</a>
-    </p>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src={logo.src} width="24" height="24" alt="" />
+        {SITE.name}
+      </div>
+      <div class="footer-links">
+        <a href={SITE.discordInviteUrl}>Discord</a>
+        <a href="/events/">Events</a>
+        <a href={SITE.githubUrl}>GitHub</a>
+        <a href="/code-of-conduct/">Code of Conduct</a>
+      </div>
+    </div>
+    <p class="footer-copy">&copy; {new Date().getFullYear()} {SITE.name}. Built in the open for the Tunisian tech community.</p>
   </div>
 </footer>

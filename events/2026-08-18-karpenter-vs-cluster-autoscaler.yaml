@@ -1,0 +1,14 @@
+slug: karpenter-vs-cluster-autoscaler
+title: "Karpenter vs. Cluster Autoscaler: Autoscaling Across Hyperscalers"
+date: "2026-08-18T21:00:00+01:00"
+tags:
+  - kubernetes
+  - autoscaling
+  - karpenter
+  - cluster-autoscaler
+summary: >
+  How Karpenter and Cluster Autoscaler work under the hood across different
+  hyperscalers, how each behaves at scale, and how to decide which one fits
+  your workloads.
+recording_url: ""
+slides_url: ""

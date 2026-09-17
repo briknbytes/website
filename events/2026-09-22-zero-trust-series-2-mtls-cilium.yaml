@@ -1,0 +1,13 @@
+slug: zero-trust-series-2-mtls-cilium
+title: "Zero Trust Series #2: Enforcing mTLS in Kubernetes with Cilium"
+date: "2026-09-22T20:00:00+01:00"
+tags:
+  - kubernetes
+  - zero-trust
+  - security
+  - cilium
+summary: >
+  Second installment of the Zero Trust series — enforcing mutual TLS between
+  workloads in Kubernetes using Cilium.
+recording_url: ""
+slides_url: ""
