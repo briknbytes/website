@@ -1,0 +1,10 @@
+name = "briknbytes-website"
+compatibility_date = "2024-09-25"
+
+# NOTE: `pages_build_output_dir` does NOT make plain `npx wrangler deploy`
+# deploy this as a Pages project — tested against wrangler 3.114 and 4.133,
+# both explicitly refuse and tell you to run `wrangler pages deploy` instead.
+# This file only exists so `wrangler pages deploy` can infer the project
+# name; the Cloudflare dashboard's "Deploy command" build setting must be
+# set to `npx wrangler pages deploy dist` (see README's Deploying section).
+pages_build_output_dir = "dist"

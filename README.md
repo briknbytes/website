@@ -68,6 +68,16 @@ while testing locally.
 2. Build settings:
    - Build command: `npm run build`
    - Build output directory: `dist`
+   - **Deploy command**: `npx wrangler pages deploy dist`. Cloudflare's
+     Git-connected builds now default this to plain `npx wrangler deploy`,
+     which fails with "It looks like you've run a Workers-specific command
+     in a Pages project" — `wrangler deploy` does not know how to publish a
+     Pages project even with `pages_build_output_dir` set in
+     `wrangler.toml` (tested against wrangler 3.114 and 4.133, both refuse).
+     If the dashboard doesn't expose a separate "Deploy command" field for
+     your project, it was likely created as a Workers project instead of a
+     Pages project — recreate it via Workers & Pages → **Pages** tab
+     specifically → Connect to Git.
    - Functions are picked up automatically from `functions/` at the repo root.
 3. Set these as Pages environment variables (Settings → Environment variables
    — put secrets in "Encrypt" mode for `DISCORD_CLIENT_SECRET` and
