@@ -1,0 +1,13 @@
+slug: mtls-with-ztunnel
+title: "Build a Sidecarless mTLS with Ztunnel from Scratch"
+date: "2026-09-29T21:00:00+01:00"
+tags:
+  - kubernetes
+  - zero-trust
+  - ztunnel
+  - mTLS
+summary: >
+  We're continuing our Zero-Trust Kubernetes series!
+  After our hands-on demos covering Istio, Cilium, and establishing manual mTLS using OpenSSL between two Linux processes, our next step is taking a deep dive into sidecarless service mesh architectures.
+has_recording: false
+has_slides: false
