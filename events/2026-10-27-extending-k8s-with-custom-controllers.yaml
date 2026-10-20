@@ -1,0 +1,12 @@
+slug: extending-k8s-with-custom-controllers
+title: "Extending k8s with Custom Controllers"
+date: "2026-10-27T21:00:00+01:00"
+tags:
+  - kubernetes
+  - controllers
+  - golang
+summary: >
+  In this session, we take a deep dive into extending k8s using the Operator Pattern! 
+  We explore API machinery fundamentals, design Custom Resource Definitions (CRDs), and write a custom reconcilers in Go.
+has_recording: false
+has_slides: false
