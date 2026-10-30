@@ -1,0 +1,15 @@
+slug: extending-k8s-with-custom-controllers-2-hands-on
+title: "Extending k8s with Custom Controllers, Part 2: Hands-on"
+date: "2026-11-10T21:00:00+01:00"
+tags:
+  - kubernetes
+  - controllers
+  - golang
+  - client-go
+  - kubebuilder
+summary: >
+  Last time we covered how controllers and informers work. This time, we write one!
+  We build the same simple controller twice, live: first with raw client-go, wiring up informers and workqueues by hand,
+  then with kubebuilder and controller-runtime, to see exactly what the framework does for you.
+has_recording: false
+has_slides: false
